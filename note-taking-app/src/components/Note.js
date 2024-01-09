@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import "./Note.css";
 const Note = () => {
   const [notes, setNotes] = useState([]);
   const [newTitle, setNewTitle] = useState("");
@@ -38,7 +38,7 @@ const Note = () => {
   };
   const updateNote = (id) => {
     axios
-      .put("http://localhost:5000/notes/" + id, { content: editedContent })
+      .patch("http://localhost:5000/notes/" + id, { content: editedContent })
       .then(() => {
         const updatedNotes = [...notes];
         const notesIndex = updatedNotes.findIndex((note) => note.id === id);
@@ -56,8 +56,8 @@ const Note = () => {
     : notes;
   return (
     <>
-      <h1>Note</h1>
-      <div>
+      <h1 className="header-title">Note</h1>
+      <div className="header-container">
         <input
           type="text"
           placeholder="Title..."
@@ -79,36 +79,58 @@ const Note = () => {
           Add
         </button>
       </div>
-      <div>
-        <input
-          type="text"
-          placeholder="Serach by title.."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        ></input>
-      </div>
-      {filterNotes.map((note) => (
-        <div key={note.id}>
-          <h3>{note.title}</h3>
-          {editMode === note.id ? (
-            <div>
-              <input
-                type="text"
-                value={editedContent}
-                onChange={(e) => setEditedContent(e.target.value)}
-              ></input>
-              <button onClick={() => updateNote(note.id)}>update</button>
-            </div>
-          ) : (
-            <p>{note.content}</p>
-          )}
-          <p>{note.date}</p>
-          {editMode !== note.id ? (
-            <button onClick={(e) => setEditMode(note.id)}>Edit</button>
-          ) : null}
-          <button onClick={() => deletenote(note.id)}>delete</button>
+      <div className="details-container">
+        <div className="search-box">
+          <input
+            type="text"
+            placeholder="Serach by title.."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          ></input>
         </div>
-      ))}
+        <div className="card-container">
+          {filterNotes.map((note) => (
+            <div className="individual-card">
+              <div key={note.id}>
+                <h3>{note.title}</h3>
+                {editMode === note.id ? (
+                  <div>
+                    <input
+                      type="text"
+                      value={editedContent}
+                      onChange={(e) => setEditedContent(e.target.value)}
+                    ></input>
+                    <button onClick={() => updateNote(note.id)}>update</button>
+                  </div>
+                ) : (
+                  <p>{note.content}</p>
+                )}
+                <p>{note.date}</p>
+                <div className="cardfooter">
+                  {editMode !== note.id ? (
+                    <div className="editfooter">
+                      <button
+                        className="editbtn "
+                        onClick={(e) => setEditMode(note.id)}
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  ) : null}
+                  <div className="deletebtn">
+                    <button
+                      className="deletebtn"
+                      onClick={() => deletenote(note.id)}
+                    >
+                      delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </>
   );
 };
